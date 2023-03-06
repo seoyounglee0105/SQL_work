@@ -109,3 +109,40 @@ VALUES (3, '라면', 800);
 SELECT * FROM product;
 SELECT * FROM employee;
 SELECT * FROM customer;
+
+-- 이미 생성된 테이블의 제약사항 변경
+ALTER TABLE student MODIFY grade INT NULL; -- 기존 : NOT NULL -> 변경 : NULL 허용
+
+desc student;
+
+-- 포지셔널 타입 : 순서에 맞춰 값을 넣기
+INSERT INTO student(student_id, name, major)
+VALUES (1, '홍길동', '검술학과');
+
+-- 연습
+-- grade의 제약조건을 다시 NOT NULL로 변경해보세요.
+DELETE FROM student WHERE grade IS NULL;
+ALTER TABLE student MODIFY grade INT NOT NULL;
+
+SELECT * FROM student;
+
+-- 문제
+-- major 컬럼의 제약조건을 NOT NULL로 변경해보세요.
+ALTER TABLE student MODIFY major VARCHAR(50) NOT NULL;
+
+DESC student;
+
+-- INSERT 구문에서, 모든 컬럼에 값을 삽입할 경우 컬럼 선언 부분 생략 가능
+INSERT INTO student VALUES (2, '홍길동2', 3, '검술학과');
+
+-- 정리
+-- INSERT 구문 컬럼명 선언 방식
+-- 1. 전부 작성
+-- 2. 제약사항이 NOT NULL이 아니라면, 해당 컬럼을 제외하고 작성 가능
+-- 3. 전부 삽입하는 상황이라면, 컬럼 선언 부분 생략 가능
+
+
+
+
+
+
