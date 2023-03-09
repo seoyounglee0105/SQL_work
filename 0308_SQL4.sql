@@ -14,7 +14,8 @@ SELECT now(), curdate(), curtime();
 -- 문자열 함수
 SELECT ASCII('U'); -- 문자열을 정수 값으로
 
-SELECT char_length('my sql test'); -- 문자열 길이 (공백 포함)
+SELECT char_length('my sql test안녕'); -- 문자열 길이 (공백 포함)
+SELECT length('my sql test안녕'); -- byte 수 (공백 포함)
 
 SELECT concat("green", "class", "       100%") AS title; -- 문자열 병합
 

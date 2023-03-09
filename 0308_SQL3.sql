@@ -1,3 +1,5 @@
+-- 테이블 분석해보기
+
 USE employees;
 
 show tables;
