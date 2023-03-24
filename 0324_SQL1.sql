@@ -1,0 +1,15 @@
+CREATE DATABASE demo5;
+USE demo5;
+
+CREATE TABLE user (
+	id INT NOT NULL AUTO_INCREMENT,
+    userName VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id)
+);
+
+-- utf-8인지 확인
+SHOW VARIABLES LIKE 'c%';
+
+SELECT * FROM user;
