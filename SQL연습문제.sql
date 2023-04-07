@@ -106,3 +106,54 @@ ON m.dept_no = d.dept_no
 WHERE m.to_date = '9999-01-01'
 		AND s.to_date = '9999-01-01'
         AND d.dept_name IN ('Finance', 'Production', 'Sales');
+
+
+/* 
+'Senior'가 포함되는 직급에 현재 속해 있는 사원들 중, 
+현재 급여가 58000에서 59000 사이인 사원들의 emp_no, 이름, 급여를 출력하시오.
+
+조건 1) 이름은 first_name과 last_name을 연결한 형태로 출력하시오.
+			(ex. Mariusz Prampolini)
+조건 2) 급여를 내림차순으로 정렬하시오.
+조건 3) 결과 집합의 행이 5개만 나타나도록 지정하시오.
+*/
+
+SELECT e.emp_no, CONCAT(first_name, ' ', last_name) AS '이름', salary
+FROM employees AS e
+LEFT JOIN titles AS t
+ON e.emp_no = t.emp_no
+LEFT JOIN salaries AS s
+ON e.emp_no = s.emp_no
+WHERE t.title LIKE '%Senior%'
+				AND t.to_date = '9999-01-01'
+                AND s.to_date = '9999-01-01'
+				AND s.salary BETWEEN 58000 AND 59000
+ORDER BY salary DESC
+LIMIT 5;
+
+
+SELECT * FROM titles;
+SELECT * FROM employees;
+SELECT * FROM salaries;
+
+-- 현재 'Senior'가 포함되지 않는 직급에 속해 있는 사원들 중,
+-- 현재 급여를 65000 ~ 66000 사이로 받고 있는 사원들의 수를 구하시오.
+-- 단, FROM 절과 WHERE 절 모두 서브 쿼리를 사용하시오.
+
+SELECT COUNT(*) AS '사원 수'
+FROM (
+		SELECT e.emp_no
+		FROM employees AS e
+		INNER JOIN titles AS t
+		ON e.emp_no = t.emp_no
+		WHERE NOT (title LIKE '%Senior%')
+					   AND t.to_date = '9999-01-01'
+	) AS et
+WHERE emp_no IN (
+		SELECT emp_no
+		FROM salaries
+        WHERE (salary BETWEEN 65000 AND 66000)
+					   AND (to_date = '9999-01-01')
+	);
+
+
