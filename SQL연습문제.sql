@@ -40,8 +40,7 @@ LIMIT 5;
 -- 그룹을 대상으로 한 조건이므로 HAVING 절에 입력함
 
 -- LIKE와 함께 쓰는 와일드 문자로는 \_와 % 등이 있음
--- %는 0개 이상의 문자를 대체하며, \_는
- 1개의 문자를 대체함
+-- %는 0개 이상의 문자를 대체하며, \_는 1개의 문자를 대체함
 
 -- LIMIT 숫자를 입력하면 결과집합에 해당 숫자 만큼의 레코드만 출력되도록 함
 
@@ -155,5 +154,27 @@ WHERE emp_no IN (
         WHERE (salary BETWEEN 65000 AND 66000)
 					   AND (to_date = '9999-01-01')
 	);
+
+SELECT * FROM salaries;
+
+SELECT * 
+FROM departments
+WHERE CHAR_LENGTH(dept_name) < 10;
+
+SELECT * FROM dept_emp;
+SELECT * FROM salaries;
+
+-- 부서명 길이가 10 미만인 부서에 현재 속해 있는 사원들의 
+-- 급여 평균을 소수점 둘째 자리까지 나타내시오.
+SELECT FORMAT(AVG(salary), 2)
+FROM salaries
+WHERE emp_no IN (SELECT de.emp_no 
+									  FROM dept_emp AS de
+									  INNER JOIN departments AS d
+                                      ON de.dept_no = d.dept_no
+                                      WHERE CHAR_LENGTH(d.dept_name) < 10 
+													AND de.to_date = '9999-01-01')
+				AND to_date = '9999-01-01';
+-- 참고 : 부서명이 영문이라서 LENGTH 메서드를 사용해도 무관 
 
 
