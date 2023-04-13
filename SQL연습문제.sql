@@ -141,12 +141,10 @@ SELECT * FROM salaries;
 
 SELECT COUNT(*) AS '사원 수'
 FROM (
-		SELECT e.emp_no
-		FROM employees AS e
-		INNER JOIN titles AS t
-		ON e.emp_no = t.emp_no
+		SELECT emp_no
+		FROM titles
 		WHERE NOT (title LIKE '%Senior%')
-					   AND t.to_date = '9999-01-01'
+					   AND to_date = '9999-01-01'
 	) AS et
 WHERE emp_no IN (
 		SELECT emp_no
@@ -154,6 +152,7 @@ WHERE emp_no IN (
         WHERE (salary BETWEEN 65000 AND 66000)
 					   AND (to_date = '9999-01-01')
 	);
+    
 
 SELECT * FROM salaries;
 
@@ -178,3 +177,36 @@ WHERE emp_no IN (SELECT de.emp_no
 -- 참고 : 부서명이 영문이라서 LENGTH 메서드를 사용해도 무관 
 
 
+-- 1998년 이후 기준으로 봉급제일 많이 받는 부서 순으로 조회해보세요
+
+
+SELECT * FROM dept_emp WHERE YEAR(from_date) >= 1998;
+
+SELECT * FROM salaries WHERE YEAR(from_date) >= 1998;
+
+SELECT d.dept_no, de.dept_name, SUM(s.salary)
+FROM dept_emp AS d
+INNER JOIN salaries AS s
+ON d.emp_no = s.emp_no
+LEFT JOIN departments AS de
+ON d.dept_no = de.dept_no
+WHERE YEAR(d.from_date) >= 1998
+			   AND  YEAR(s.from_date) >= 1998
+GROUP BY d.dept_no
+ORDER BY SUM(s.salary) DESC;
+
+select d.dept_no, dept_name
+from departments as d
+inner join (
+    select dept_no, round(avg(s)) as dept_avg_s
+    from dept_emp as d
+    inner join (
+        select emp_no, round(avg(salary)) as s
+        from salaries
+        where from_date >= DATE_FORMAT( '1998-01-01', '%Y-%m-%d')
+        group by emp_no ) as avg_t
+    on d.emp_no = avg_t.emp_no
+    group by dept_no
+) as result
+on d.dept_no = result.dept_no
+order by dept_avg_s desc;
