@@ -178,12 +178,6 @@ WHERE emp_no IN (SELECT de.emp_no
 
 
 -- 1998년 이후 기준으로 봉급제일 많이 받는 부서 순으로 조회해보세요
-
-
-SELECT * FROM dept_emp WHERE YEAR(from_date) >= 1998;
-
-SELECT * FROM salaries WHERE YEAR(from_date) >= 1998;
-
 SELECT d.dept_no, de.dept_name, SUM(s.salary)
 FROM dept_emp AS d
 INNER JOIN salaries AS s
@@ -195,18 +189,49 @@ WHERE YEAR(d.from_date) >= 1998
 GROUP BY d.dept_no
 ORDER BY SUM(s.salary) DESC;
 
-select d.dept_no, dept_name
-from departments as d
-inner join (
-    select dept_no, round(avg(s)) as dept_avg_s
-    from dept_emp as d
-    inner join (
-        select emp_no, round(avg(salary)) as s
-        from salaries
-        where from_date >= DATE_FORMAT( '1998-01-01', '%Y-%m-%d')
-        group by emp_no ) as avg_t
-    on d.emp_no = avg_t.emp_no
-    group by dept_no
-) as result
-on d.dept_no = result.dept_no
-order by dept_avg_s desc;
+
+SELECT  * FROM departments;
+
+SELECT * FROM dept_manager AS dm
+JOIN employees AS e
+ON dm.emp_no = e.emp_no
+WHERE to_date = '9999-01-01'; -- 110567
+
+SELECT * FROM dept_emp;
+
+SELECT dept_no, COUNT(*)
+FROM dept_emp
+WHERE to_date = '9999-01-01'
+GROUP BY dept_no
+ORDER BY COUNT(*) DESC;
+
+-- 현재 가장 많은 사원들이 속해 있는 부서의 현재 매니저 이름을 구하시오.
+-- 단, 이름은 first_name과 last_name을 연결한 형태로 출력하시오. 
+-- (ex. Mariusz Prampolini)
+
+SELECT CONCAT(first_name, ' ', last_name) AS '이름'
+FROM dept_manager AS dm
+LEFT JOIN employees AS e
+ON dm.emp_no = e.emp_no
+WHERE (dm.to_date = '9999-01-01')
+			   AND dm.dept_no = (SELECT dept_no
+													FROM dept_emp
+													WHERE to_date = '9999-01-01'
+													GROUP BY dept_no
+													ORDER BY COUNT(*) DESC
+													LIMIT 1);
+-- 정답 : Leon DasSarma
+              
+-- 여기서부터는 bank db 이용하기
+
+-- 출금한 기록이 있는 계좌를 가진 고객의 이름(username)들을 출력하시오.
+SELECT username
+FROM user_tb
+WHERE id IN (
+			SELECT c.id
+			FROM history_tb AS h
+			LEFT JOIN account_tb AS c
+			ON h.w_account_id = c.id
+			WHERE h.w_account_id IS NOT NULL
+						AND h.d_account_id IS NULL
+            );
