@@ -224,8 +224,9 @@ WHERE (dm.to_date = '9999-01-01')
               
 -- 여기서부터는 bank db 이용하기
 
--- 출금한 기록이 있는 계좌를 가진 고객의 이름(username)들을 출력하시오.
-SELECT username
+-- 출금한 기록이 있는 계좌를 가진 고객들의 이름(fullname + username)을 출력하시오.
+
+SELECT CONCAT(fullname, username) AS '이름'
 FROM user_tb
 WHERE id IN (
 			SELECT c.id
@@ -235,3 +236,34 @@ WHERE id IN (
 			WHERE h.w_account_id IS NOT NULL
 						AND h.d_account_id IS NULL
             );
+
+-- 문제 1. history_tb 에서 계좌 id 1번인 입금 내역을 출력하시오 
+SELECT * FROM history_tb
+WHERE d_account_id = 1 AND w_account_id IS NULL;
+
+-- 문제 2. history_tb 에서 계좌 id 1번인 출금 내역을 출력하시오
+SELECT * FROM history_tb
+WHERE w_account_id = 1 AND d_account_id IS NULL;
+
+-- 문제 3. history_tb 에서 계좌 id 1번인 입출금 내역을 출력하시오 
+SELECT * FROM history_tb
+WHERE (w_account_id = 1  AND d_account_id IS NULL)
+				OR (d_account_id = 1 AND w_account_id IS NULL);
+                
+-- 문제 4. fullname 애기공룡의 계좌id를 뽑아 계좌 입출금 내역을 출력해주세요. 
+
+SELECT * FROM history_tb;
+SELECT * FROM account_tb;
+SELECT * FROM user_tb;
+
+SELECT * 
+FROM history_tb AS h
+WHERE h.w_account_id IN (SELECT a.id FROM user_tb AS u
+													JOIN account_tb AS a
+													ON u.id = a.user_id
+													WHERE u.fullname = '애기공룡')
+	  OR h.d_account_id IN (SELECT u.id FROM user_tb AS u
+													JOIN account_tb AS a
+													ON u.id = a.user_id
+													WHERE u.fullname = '애기공룡')
+
