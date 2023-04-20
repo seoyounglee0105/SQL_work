@@ -265,5 +265,26 @@ WHERE h.w_account_id IN (SELECT a.id FROM user_tb AS u
 	  OR h.d_account_id IN (SELECT u.id FROM user_tb AS u
 													JOIN account_tb AS a
 													ON u.id = a.user_id
-													WHERE u.fullname = '애기공룡')
+													WHERE u.fullname = '애기공룡');
+
+-- 문제 1 
+-- history_tb 에서 입금 내역과 입금 계좌 번호를 join 을 사용해서 출력 하시오
+SELECT h.*, a.number AS '입금 계좌번호'
+FROM history_tb AS h
+LEFT JOIN account_tb AS a
+ON h.d_account_id = a.id
+WHERE d_account_id IS NOT NULL;
+
+-- 문제 2 
+-- history_tb 에서 출금 내역과 출금 계좌 번호를 join 을 사용해서 출력 하시오 
+SELECT h.*, a.number AS '출금 계좌번호'
+FROM history_tb AS h
+LEFT JOIN account_tb AS a
+ON h.w_account_id = a.id
+WHERE w_account_id IS NOT NULL;
+
+SELECT * FROM history_tb;
+SELECT * FROM account_tb;
+SELECT * FROM user_tb;
+
 
