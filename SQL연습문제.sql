@@ -287,4 +287,10 @@ SELECT * FROM history_tb;
 SELECT * FROM account_tb;
 SELECT * FROM user_tb;
 
-
+-- 쿼리 조건문을 활용하여, history_tb의 거래 유형을 입금/출금/이체로 구분하여 '비고'라는 컬럼으로 출력하시오.
+SELECT *, CASE 
+			WHEN (w_account_id IS NULL AND d_account_id IS NOT NULL) THEN '입금'
+			WHEN (w_account_id IS NOT NULL AND d_account_id IS NULL) THEN '출금'
+            WHEN (w_account_id IS NOT NULL AND d_account_id IS NOT NULL) THEN '이체'
+		  END AS '비고'
+FROM history_tb;
